@@ -46,7 +46,7 @@ void createSlider(){
 
 
 int main(int argc,char* argv[]){
-	
+        
         //avvio della videocamera
         VideoCapture capture;
         
@@ -56,7 +56,7 @@ int main(int argc,char* argv[]){
         
         //matrice su cui verranno salvati i frame catturati
         Mat cameraFeed;
-        
+
         //matrice su cui salvo l'immagine HSV
         Mat hsvFrame;
         
@@ -66,9 +66,9 @@ int main(int argc,char* argv[]){
         //matrice per mostrare l'immagine con il filtro blur
         Mat frameBlur;
         
-	//matrice per Hough Transform
-	Mat Hough;
-	vector<Vec3f> circles;
+        //matrice per Hough Transform
+        Mat Hough;
+        vector<Vec3f> circles;
         
         //imposto la dimensione dei frame da catturare
         capture.set(CV_CAP_PROP_FRAME_WIDTH,FRAME_WIDTH);
@@ -81,9 +81,6 @@ int main(int argc,char* argv[]){
         while(1){
                 //catturo un frame della webcam
                 capture.read(cameraFeed);
-                
-                //applico il gaussian blur
-                //medianBlur(cameraFeed,frameBlur,5);
 
                 //cambio lo spazio dei colori RGB-->HSV
                 //cvtColor(sorgente, destinazione, operazione)
@@ -100,33 +97,39 @@ int main(int argc,char* argv[]){
                 Mat rectErosione = getStructuringElement(MORPH_RECT,Size(3,3));
                 erode(thresholded, thresholded,rectErosione);
                 erode(thresholded, thresholded,rectErosione);
+		erode(thresholded, thresholded,rectErosione);
                 
                 //dilato ogni pixel rilevato in un rect 8x8
                 Mat rectDilataz = getStructuringElement( MORPH_RECT,Size(8,8));
                 dilate(thresholded, thresholded, rectDilataz);
                 dilate(thresholded, thresholded, rectDilataz);
+		dilate(thresholded, thresholded, rectDilataz);
 
-		// Convert it to gray
-  		//cvtColor(thresholded, Hough, CV_HSV2BGR );
+		//applico il gaussian blur
+                //medianBlur(cameraFeed,frameBlur,5);
+		GaussianBlur(thresholded,thresholded, Size(11,11),2,2);
+
+                // Convert it to gray
+                //cvtColor(thresholded,Hough, CV_HSV2BGR);
 		//cvtColor(Hough, Hough, CV_BGR2GRAY);
-		
-		//Hough Transform
-		HoughCircles(thresholded, circles, CV_HOUGH_GRADIENT, 2, thresholded.rows/4, 100, 40, 20, 200 );
-		
-		/// Draw the circles detected
-		  for( size_t i = 0; i < circles.size(); i++ )
-		  {
-		      Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
-		      int radius = cvRound(circles[i][2]);
-		      
-		      // circle center
-		      circle( cameraFeed, center, 3, Scalar(0,255,0), -1, 8, 0 );
-		      
-		      // circle outline
-		      circle( cameraFeed, center, radius, Scalar(0,0,255), 3, 8, 0 );
-		   }
+                
+                //Hough Transform
+                HoughCircles(thresholded, circles, CV_HOUGH_GRADIENT, 2, thresholded.rows/4, 100, 40, 10, 120 );
+                
+                /// Draw the circles detected
+                  for( size_t i = 0; i < circles.size(); i++ )
+                  {
+                      Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
+                      int radius = cvRound(circles[i][2]);
+                      
+                      // circle center
+                      circle( cameraFeed, center, 3, Scalar(0,255,0), -1, 8, 0 );
+                      
+                      // circle outline
+                      circle( cameraFeed, center, radius, Scalar(0,0,255), 3, 8, 0 );
+                   }
 
-                		
+                                
                 //visualizzo su mainGui il frame originale
                 imshow(mainGui,cameraFeed);
                 
@@ -135,12 +138,12 @@ int main(int argc,char* argv[]){
                 //visualizzo su blurWindow l'immagine con il filtro blur
                 //imshow(blurWindow,frameBlur);
 
-		
+                
                 
                 //premi esc per uscire oppure attendi il tempo di attesa prima di passare al frame successivo
                 char c=waitKey(33);
-		if(c == 27) break;
-        	}
+                if(c == 27) break;
+                }
         
         
         return(0);
