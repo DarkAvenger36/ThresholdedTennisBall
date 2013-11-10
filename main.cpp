@@ -116,10 +116,9 @@ int main(int argc,char* argv[]){
                 HoughCircles(thresholded, circles, CV_HOUGH_GRADIENT, 2, thresholded.rows/4, 100, 40, 10, 120 );
                 
                 //Se il numero di cerchi rilevati è minore del massimo allora li disegno
-                //int numCircles=circle.size();
                 std::vector<int>::size_type numCircles = circles.size();
                 if(numCircles<MAXOBJECT){
-                  for( size_t i = 0; i < circles.size(); i++ )
+                  for( int i = 0; i < numCircles; i++ )
                   {
                       Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
                       int radius = cvRound(circles[i][2]);
