@@ -20,6 +20,9 @@ int H_MAX = 256;
 int S_MAX = 256;
 int V_MAX = 256;
 
+//numero massimo di oggetti rilevabili
+int MAXOBJECT=10;
+
 //finestre
 const string mainGui="Immagine acquisita";
 const string thresholdWindow="Immagine rilevata";
@@ -97,26 +100,25 @@ int main(int argc,char* argv[]){
                 Mat rectErosione = getStructuringElement(MORPH_RECT,Size(3,3));
                 erode(thresholded, thresholded,rectErosione);
                 erode(thresholded, thresholded,rectErosione);
-		erode(thresholded, thresholded,rectErosione);
+				erode(thresholded, thresholded,rectErosione);
                 
                 //dilato ogni pixel rilevato in un rect 8x8
                 Mat rectDilataz = getStructuringElement( MORPH_RECT,Size(8,8));
                 dilate(thresholded, thresholded, rectDilataz);
                 dilate(thresholded, thresholded, rectDilataz);
-		dilate(thresholded, thresholded, rectDilataz);
+				dilate(thresholded, thresholded, rectDilataz);
 
-		//applico il gaussian blur
+				//applico il gaussian blur
                 //medianBlur(cameraFeed,frameBlur,5);
-		GaussianBlur(thresholded,thresholded, Size(11,11),2,2);
-
-                // Convert it to gray
-                //cvtColor(thresholded,Hough, CV_HSV2BGR);
-		//cvtColor(Hough, Hough, CV_BGR2GRAY);
+				GaussianBlur(thresholded,thresholded, Size(11,11),2,2);
                 
                 //Hough Transform
                 HoughCircles(thresholded, circles, CV_HOUGH_GRADIENT, 2, thresholded.rows/4, 100, 40, 10, 120 );
                 
-                /// Draw the circles detected
+                //Se il numero di cerchi rilevati è minore del massimo allora li disegno
+                //int numCircles=circle.size();
+                std::vector<int>::size_type numCircles = circles.size();
+                if(numCircles<MAXOBJECT){
                   for( size_t i = 0; i < circles.size(); i++ )
                   {
                       Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
@@ -128,6 +130,9 @@ int main(int argc,char* argv[]){
                       // circle outline
                       circle( cameraFeed, center, radius, Scalar(0,0,255), 3, 8, 0 );
                    }
+			   }else{
+				   printf("troppi oggetti rilevati! Eliminare il rumore! \n");
+			   }
 
                                 
                 //visualizzo su mainGui il frame originale
