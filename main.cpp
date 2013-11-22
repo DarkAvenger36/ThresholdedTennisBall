@@ -47,6 +47,19 @@ void createSlider(){
         createTrackbar("V-max",settingWindow, &V_MAX, 256,onTrackbarSlide);
 }
 
+void plotVerticalLine(Mat img){
+	int width1=FRAME_WIDTH/3;
+	int width2=FRAME_WIDTH*2/3;
+	int height1=FRAME_HEIGHT/3;
+	int height2=FRAME_HEIGHT*2/3;
+	//linee orizzontali
+	cv::line(img,cv::Point(0,height1),cv::Point(FRAME_WIDTH,height1),cv::Scalar(0,0,200),3,CV_AA);
+	cv::line(img,cv::Point(0,height2),cv::Point(FRAME_WIDTH,height2),cv::Scalar(0,0,200),3,CV_AA);
+	//line verticali
+	cv::line(img,cv::Point(width1,0),cv::Point(width1,FRAME_HEIGHT),cv::Scalar(0,0,200),3,CV_AA);
+	cv::line(img,cv::Point(width2,0),cv::Point(width2,FRAME_HEIGHT),cv::Scalar(0,0,200),3,CV_AA);
+}
+
 
 int main(int argc,char* argv[]){
         
@@ -132,6 +145,9 @@ int main(int argc,char* argv[]){
 			   }else{
 				   printf("troppi oggetti rilevati! Eliminare il rumore! \n");
 			   }
+			   
+			   //Visualizzo barre verticali sull'immagine
+			   plotVerticalLine(cameraFeed);
 
                                 
                 //visualizzo su mainGui il frame originale
