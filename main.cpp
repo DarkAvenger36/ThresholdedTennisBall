@@ -130,17 +130,35 @@ int main(int argc,char* argv[]){
                 
                 //Se il numero di cerchi rilevati è minore del massimo allora li disegno
                 std::vector<int>::size_type numCircles = circles.size();
+                //cerco la posizione massima
+                int j=0;
+                int max=0;
+                for(int i=0;i<numCircles;i++){
+					if(max<cvRound(circles[i][2])){
+						max=cvRound(circles[i][2]);
+						j=i;
+					}
+				}
+				printf("max= %d \n",max);
+				printf("j= %d \n",j);
+				
                 if(numCircles<MAXOBJECT){
                   for( int i = 0; i < numCircles; i++ )
                   {
                       Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
                       int radius = cvRound(circles[i][2]);
-                      
-                      // circle center
-                      circle( cameraFeed, center, 3, Scalar(0,255,0), -1, 8, 0 );
-                      
-                      // circle outline
-                      circle( cameraFeed, center, radius, Scalar(0,0,255), 3, 8, 0 );
+                      if(i==j){
+						  // circle center
+						  circle( cameraFeed, center, 3, Scalar(0,255,0), -1, 8, 0 );
+						  // circle outline
+						  circle( cameraFeed, center, radius, Scalar(0,0,255), 3, 8, 0 );
+					  }else{
+						  						  // circle center
+						  circle( cameraFeed, center, 3, Scalar(255,255,0), -1, 8, 0 );
+						  // circle outline
+						  circle( cameraFeed, center, radius, Scalar(255,0,255), 3, 8, 0 );
+						  
+					  }
                    }
 			   }else{
 				   printf("troppi oggetti rilevati! Eliminare il rumore! \n");
@@ -161,7 +179,7 @@ int main(int argc,char* argv[]){
                 
                 
                 //premi esc per uscire oppure attendi il tempo di attesa prima di passare al frame successivo
-                char c=waitKey(33);
+                char c=waitKey(500);
                 if(c == 27) break;
                 }
         
